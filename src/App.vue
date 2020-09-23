@@ -14,7 +14,7 @@
                 <div slot="header">
                   Страна
                 </div>
-                <vs-select autocomplete v-model="countryFilter">
+                <vs-select autocomplete v-model="countryFilter" width="100%">
                   <vs-select-item
                     :key="index"
                     :value="item.name"
@@ -28,7 +28,12 @@
                 <div slot="header">
                   Тип
                 </div>
-                <vs-select multiple autocomplete v-model="typeFilter">
+                <vs-select
+                  multiple
+                  autocomplete
+                  v-model="typeFilter"
+                  width="100%"
+                >
                   <vs-select-item
                     :key="index"
                     :value="item"
@@ -73,7 +78,12 @@
           </div>
         </div>
         <div class="main">
-          <vs-table :data="hotels" max-items="3" pagination>
+          <vs-table
+            :data="hotels"
+            max-items="3"
+            pagination
+            noDataText="Записей не найдено"
+          >
             <template slot="thead">
               <vs-th>
                 Название

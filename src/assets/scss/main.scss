@@ -45,7 +45,7 @@ body {
 }
 
 .sidebar {
-    flex: 1 1 25%;
+    flex: 1 1 15%;
     .clear, .submit{
         padding: 0 20px;
         button{
@@ -75,7 +75,7 @@ body {
     }   
 }
 .main {
-    flex: 1 1 75%;
+    flex: 1 1 85%;
 }
 
 
@@ -95,6 +95,16 @@ body {
 @media (max-width: 1359.9px) {
     .container {
         max-width: 904px;
+        &__inner {
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+    }
+    .sidebar {
+        flex: 1 1 100%;
+    }
+    .main {
+        flex: 1 1 100%;
     }
 }
 
