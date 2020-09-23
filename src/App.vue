@@ -4,7 +4,7 @@
       <div class="container__inner">
         <div class="sidebar">
           <div class="clear">
-            <vs-button color="primary" type="filled"
+            <vs-button color="primary" type="filled" @click="clearFilters()"
               >Очистить фильтры</vs-button
             >
           </div>
@@ -14,12 +14,12 @@
                 <div slot="header">
                   Страна
                 </div>
-                <vs-select autocomplete v-model="select1">
+                <vs-select autocomplete v-model="countryFilter">
                   <vs-select-item
                     :key="index"
-                    :value="item.value"
-                    :text="item.text"
-                    v-for="(item, index) in options1"
+                    :value="item.name"
+                    :text="item.name"
+                    v-for="(item, index) in countries"
                   />
                 </vs-select>
               </vs-collapse-item>
@@ -28,71 +28,75 @@
                 <div slot="header">
                   Тип
                 </div>
-                <vs-select multiple autocomplete v-model="select2">
+                <vs-select multiple autocomplete v-model="typeFilter">
                   <vs-select-item
                     :key="index"
-                    :value="item.value"
-                    :text="item.text"
-                    v-for="(item, index) in options2"
+                    :value="item"
+                    :text="item"
+                    v-for="(item, index) in types"
                   />
                 </vs-select>
               </vs-collapse-item>
-              <vs-collapse-item class="filters__inner filters__inner--stars">
+              <vs-collapse-item class="filters__inner filters__inner--rates">
                 <div slot="header">
                   Звёзды
                 </div>
-                <vs-col v-for="(region, index) in regions" :key="index">
-                  <vs-checkbox v-model="form.regions" :vs-value="region">{{
-                    region.name
-                  }}</vs-checkbox>
+                <vs-col v-for="(rate, index) in rates" :key="index">
+                  <vs-checkbox v-model="ratesFilter" :vs-value="rate">
+                    <vs-icon
+                      icon="star"
+                      v-for="star in rate"
+                      :key="star"
+                      color="primary"
+                    ></vs-icon
+                  ></vs-checkbox>
                 </vs-col>
               </vs-collapse-item>
               <vs-collapse-item class="filters__inner filters__inner--reviews">
                 <div slot="header">
                   Кол-во отзывов от
                 </div>
-                <vs-input-number v-model="reviews" />
+                <vs-input-number v-model="reviewsFilter" />
               </vs-collapse-item>
               <vs-collapse-item class="filters__inner filters__inner--price">
                 <div slot="header">
                   Цена до
                 </div>
-                <vs-slider v-model="price" />
+                <vs-slider :max="maxPrice" v-model="priceFilter" />
               </vs-collapse-item>
             </vs-collapse>
           </div>
           <div class="submit">
-            <vs-button color="success" type="filled"
+            <vs-button color="success" type="filled" @click="submitFilters()"
               >Применить фильтры</vs-button
             >
           </div>
         </div>
         <div class="main">
-          <vs-table :data="users">
+          <vs-table :data="hotels" max-items="3" pagination>
             <template slot="thead">
-              <vs-th sort-key="email">
+              <vs-th>
                 Название
               </vs-th>
-              <vs-th sort-key="username">
+              <vs-th>
                 Описание
-              </vs-th>
-              <vs-th sort-key="id">
-                Nro
               </vs-th>
             </template>
 
             <template slot-scope="{ data }">
               <vs-tr :key="indextr" v-for="(tr, indextr) in data">
-                <vs-td :data="data[indextr].email">
-                  {{ data[indextr].email }}
+                <vs-td :data="data[indextr].name">
+                  {{ data[indextr].name }}
                 </vs-td>
 
-                <vs-td :data="data[indextr].username">
-                  {{ data[indextr].username }}
+                <vs-td :data="data[indextr].description">
+                  {{ data[indextr].description }}
                 </vs-td>
 
                 <vs-td :data="data[indextr].id">
-                  {{ data[indextr].id }}
+                  <vs-button color="primary" type="filled" size="small"
+                    >Забронировать</vs-button
+                  >
                 </vs-td>
               </vs-tr>
             </template>
@@ -107,119 +111,93 @@
 export default {
   name: "App",
   data: () => ({
-    select1: "",
-    select2: [],
-    form: {
-      regions: []
+    countryFilter: "",
+    typeFilter: [],
+    ratesFilter: [],
+    reviewsFilter: 0,
+    priceFilter: null,
+    types: [],
+    rates: [5, 4, 3, 2, 1],
+    hotels: [],
+    countries: [],
+    maxPrice: null
+  }),
+  methods: {
+    fetchHotels() {
+      // fetching hotels + making types array + getting max price for slider
+      fetch(process.env.VUE_APP_HOTELS_API)
+        .then(resp => resp.json())
+        .then(data => {
+          this.hotels = data.hotels;
+          this.types = data.hotels
+            .map(hotel => hotel.type)
+            .filter((value, index, self) => self.indexOf(value) === index);
+          this.maxPrice = Math.max.apply(
+            Math,
+            data.hotels.map(function(o) {
+              return o.min_price;
+            })
+          );
+        })
+        .catch(error => console.error(error));
     },
-    reviews: 333,
-    price: 44,
-    users: [
-      {
-        id: 1,
-        name: "Leanne Graham",
-        username: "Bret",
-        email: "Sincere@april.biz",
-        website: "hildegard.org"
-      },
-      {
-        id: 2,
-        name: "Ervin Howell",
-        username: "Antonette",
-        email: "Shanna@melissa.tv",
-        website: "anastasia.net"
-      },
-      {
-        id: 3,
-        name: "Clementine Bauch",
-        username: "Samantha",
-        email: "Nathan@yesenia.net",
-        website: "ramiro.info"
-      },
-      {
-        id: 4,
-        name: "Patricia Lebsack",
-        username: "Karianne",
-        email: "Julianne.OConner@kory.org",
-        website: "kale.biz"
-      },
-      {
-        id: 5,
-        name: "Chelsey Dietrich",
-        username: "Kamren",
-        email: "Lucio_Hettinger@annie.ca",
-        website: "demarco.info"
-      },
-      {
-        id: 6,
-        name: "Mrs. Dennis Schulist",
-        username: "Leopoldo_Corkery",
-        email: "Karley_Dach@jasper.info",
-        website: "ola.org"
-      },
-      {
-        id: 7,
-        name: "Kurtis Weissnat",
-        username: "Elwyn.Skiles",
-        email: "Telly.Hoeger@billy.biz",
-        website: "elvis.io"
-      },
-      {
-        id: 8,
-        name: "Nicholas Runolfsdottir V",
-        username: "Maxime_Nienow",
-        email: "Sherwood@rosamond.me",
-        website: "jacynthe.com"
-      },
-      {
-        id: 9,
-        name: "Glenna Reichert",
-        username: "Delphine",
-        email: "Chaim_McDermott@dana.io",
-        website: "conrad.com"
-      },
-      {
-        id: 10,
-        name: "Clementina DuBuque",
-        username: "Moriah.Stanton",
-        email: "Rey.Padberg@karina.biz",
-        website: "ambrose.net"
-      }
-    ],
-    options1: [
-      { text: "Square", value: 1 },
-      { text: "Rectangle", value: 2 },
-      { text: "Rombo", value: 3 },
-      { text: "Romboid", value: 4 },
-      { text: "Trapeze", value: 5 },
-      { text: "Triangle", value: 6 },
-      { text: "Polygon", value: 7 },
-      { text: "Regular polygon", value: 8 },
-      { text: "Circumference", value: 9 },
-      { text: "Circle", value: 10 },
-      { text: "Circular sector", value: 11 },
-      { text: "Circular trapeze", value: 12 }
-    ],
-    options2: [
-      { text: "Square", value: 1 },
-      { text: "Rectangle", value: 2 },
-      { text: "Rombo", value: 3 },
-      { text: "Romboid", value: 4 },
-      { text: "Trapeze", value: 5 },
-      { text: "Triangle", value: 6 },
-      { text: "Polygon", value: 7 },
-      { text: "Regular polygon", value: 8 },
-      { text: "Circumference", value: 9 },
-      { text: "Circle", value: 10 },
-      { text: "Circular sector", value: 11 },
-      { text: "Circular trapeze", value: 12 }
-    ],
-    regions: [
-      { id: 1, name: "Queensland" },
-      { id: 2, name: "South Australia" },
-      { id: 3, name: "New South Wales" }
-    ]
-  })
+    fetchCountries() {
+      // fetching countries from exterenal json
+      fetch(process.env.VUE_APP_COUNTRIES_API)
+        .then(resp => resp.json())
+        .then(data => (this.countries = data))
+        .catch(error => console.error(error));
+    },
+    submitFilters() {
+      let filtered = [];
+      fetch(process.env.VUE_APP_HOTELS_API)
+        .then(resp => resp.json())
+        .then(data => {
+          data.hotels.forEach(item => {
+            let countryCond = this.countryFilter
+              ? item.country == this.countryFilter
+              : true;
+            let typeCond = this.typeFilter.length
+              ? this.typeFilter.includes(item.type)
+              : true;
+            let ratesCond = this.ratesFilter.length
+              ? this.ratesFilter.includes(
+                  Math.ceil(Number.parseFloat(item.rating))
+                )
+              : true;
+            let reviewsCond = this.reviewsFilter
+              ? item.reviews_amount >= this.reviewsFilter
+              : true;
+            let priceCond = this.priceFilter
+              ? item.min_price <= this.priceFilter
+              : true;
+            if (
+              countryCond &&
+              ratesCond &&
+              typeCond &&
+              reviewsCond &&
+              priceCond
+            ) {
+              filtered.push(item);
+            }
+          });
+          this.hotels = filtered;
+        })
+        .catch(error => console.error(error));
+    },
+    clearFilters() {
+      this.countryFilter = "";
+      this.typeFilter = [];
+      this.ratesFilter = [];
+      this.reviewsFilter = 0;
+      this.priceFilter = null;
+      this.fetchHotels();
+    }
+  },
+  mounted() {
+    this.fetchHotels();
+    this.fetchCountries();
+  }
 };
 </script>
 
