@@ -1,0 +1,123 @@
+@import 'normalize.scss';
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap');
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+a, a:hover, a:focus, a:active{
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+}
+
+body {
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 15px;
+    color: #5b5777;
+}
+.material-icons {
+    font-size: 15px!important;
+}
+
+#app{
+    margin-top: 30px;
+}
+
+.container{
+    max-width: 1800px; 
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+    position: relative;
+    z-index: 10;    
+    &__inner {
+        padding: 0 40px;
+        display: flex;
+    }
+}
+
+.sidebar {
+    flex: 1 1 25%;
+    .clear, .submit{
+        padding: 0 20px;
+        button{
+            width: 100%;
+        }
+    }
+    .filters{
+        &__inner{
+            &--stars{
+                .con-vs-checkbox {
+                    justify-content: flex-start;
+                    margin-bottom: 1em;
+                }
+            }
+            &--reviews{
+                .vs-input-number{
+                    justify-content: flex-start;
+                    background: transparent;
+                }
+            }
+            &--price{
+                .vs-collapse-item--content{
+                    padding-top: 1.5em;
+                }
+            }
+        }
+    }   
+}
+.main {
+    flex: 1 1 75%;
+}
+
+
+
+@media (max-width: 1919.9px) {
+    .container {
+        max-width: 1480px;
+    }
+}
+
+@media (max-width: 1599.9px) {
+    .container {
+        max-width: 1240px;
+    }
+}
+
+@media (max-width: 1359.9px) {
+    .container {
+        max-width: 904px;
+    }
+}
+
+@media (max-width: 1023.9px) {
+    .container {
+        max-width: 648px;
+    }
+}
+
+@media (max-width: 767.9px) {
+    .container {
+        max-width: 540px;
+    }
+}
+
+@media (max-width: 539.9px) {
+    .container{
+        max-width: 360px;
+    }
+}
+
+@media (max-width: 375px) {
+    .container{
+        max-width: 100%;
+    }    
+}
